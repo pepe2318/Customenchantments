@@ -3,15 +3,15 @@ name: Build Custom Enchantments
 
 on:
   push:
-    branches: [ "main", "master" ]
-  pull_request:
+    branches: [ "main", "master", "principal" ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Java 21
@@ -25,11 +25,16 @@ jobs:
         with:
           gradle-version: 8.14.3
 
-      - name: Build mod
-        run: gradle build
+      - name: Extract project
+        run: |
+          unzip -o CustomEnchantments-GitHub-upload.zip -d project
 
-      - name: Upload build files
+      - name: Build mod
+        run: |
+          gradle -p project/CustomEnchantments-1.21.10 build
+
+      - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: custom-enchantments-build
-          path: build/libs/*.jar
+          name: CustomEnchantments
+          path: project/CustomEnchantments-1.21.10/build/libs/*.jar
